@@ -16,6 +16,7 @@ const Onboarding = () => {
   const [newUsername, setNewUsername] = useState(username || '');
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [usernameSaved, setUsernameSaved] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -27,9 +28,9 @@ const Onboarding = () => {
       navigate('/');
     } else {
       setUser(user);
-      // Se já tem username, redirecionar para dashboard
+      // Se já tem username, marcar como salvo
       if (username) {
-        navigate('/dashboard');
+        setUsernameSaved(true);
       }
     }
   };
@@ -48,8 +49,8 @@ const Onboarding = () => {
     setLoading(true);
     try {
       setUsername(newUsername);
-      showSuccess(`Bem-vindo, ${newUsername}!`);
-      navigate('/dashboard');
+      setUsernameSaved(true);
+      showSuccess(`Nome salvo: ${newUsername}!`);
     } catch (error: any) {
       showError(error.message || 'Erro ao salvar nome de usuário');
     } finally {
@@ -75,7 +76,13 @@ const Onboarding = () => {
       description: 'Gerencie suas mesas de RPG',
       icon: <Users className="h-6 w-6" />,
       enabled: true,
-      onClick: () => navigate('/dashboard')
+      onClick: () => {
+        if (!usernameSaved) {
+          showError('Primeiro salve seu nome de usuário!');
+        } else {
+          navigate('/dashboard');
+        }
+      }
     },
     {
       id: 'personagens',
@@ -159,6 +166,11 @@ const Onboarding = () => {
                   <p className="text-sm text-gray-400 mt-2">
                     Este será o nome que outros jogadores verão
                   </p>
+                  {usernameSaved && (
+                    <div className="mt-2">
+                      <span className="text-sm text-green-400">✓ Nome salvo com sucesso!</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -173,13 +185,13 @@ const Onboarding = () => {
                   key={item.id}
                   className={`bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors cursor-pointer ${
                     !item.enabled ? 'opacity-60' : ''
-                  }`}
+                  } ${item.id === 'mesas' && !usernameSaved ? 'opacity-60' : ''}`}
                   onClick={item.onClick}
                 >
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className={`p-3 rounded-lg ${
-                        item.enabled 
+                        item.enabled && (item.id !== 'mesas' || usernameSaved)
                           ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20' 
                           : 'bg-gray-700'
                       }`}>
@@ -200,6 +212,14 @@ const Onboarding = () => {
                         </span>
                       </div>
                     )}
+                    
+                    {item.id === 'mesas' && !usernameSaved && (
+                      <div className="mt-4">
+                        <span className="text-xs px-2 py-1 bg-yellow-700 rounded-full text-yellow-300">
+                          Salve seu nome primeiro
+                        </span>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -213,11 +233,11 @@ const Onboarding = () => {
               <ol className="space-y-3 text-gray-300">
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-sm">1</span>
-                  <span>Defina seu nome de usuário acima</span>
+                  <span>Defina seu nome de usuário acima e clique em "Salvar"</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-sm">2</span>
-                  <span>Acesse "Mesas" para criar ou entrar em uma mesa de RPG</span>
+                  <span>Clique em "Mesas" para criar ou entrar em uma mesa de RPG</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-sm">3</span>
