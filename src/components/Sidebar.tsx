@@ -7,12 +7,11 @@ import {
   Users, 
   User, 
   Gamepad2, 
-  Settings, 
-  ChevronLeft, 
-  ChevronRight,
   Home,
   UserCircle,
-  LogOut
+  LogOut,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/lib/supabase';
@@ -26,16 +25,10 @@ const Sidebar = () => {
 
   const menuItems = [
     {
-      id: 'dashboard',
-      title: 'Dashboard',
+      id: 'mesas',
+      title: 'Mesas',
       icon: <Home className="h-5 w-5" />,
       path: '/dashboard'
-    },
-    {
-      id: 'personagens',
-      title: 'Personagens',
-      icon: <User className="h-5 w-5" />,
-      path: '/personagens'
     },
     {
       id: 'sistemas',
@@ -44,16 +37,16 @@ const Sidebar = () => {
       path: '/sistemas'
     },
     {
+      id: 'personagens',
+      title: 'Personagens',
+      icon: <User className="h-5 w-5" />,
+      path: '/personagens'
+    },
+    {
       id: 'perfil',
       title: 'Perfil',
       icon: <UserCircle className="h-5 w-5" />,
       path: '/perfil'
-    },
-    {
-      id: 'configuracoes',
-      title: 'Configurações',
-      icon: <Settings className="h-5 w-5" />,
-      path: '/configuracoes'
     }
   ];
 
@@ -65,6 +58,7 @@ const Sidebar = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      localStorage.removeItem('stayLoggedIn');
       showSuccess('Logout realizado com sucesso!');
       navigate('/');
     } catch (error: any) {

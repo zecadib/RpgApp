@@ -59,7 +59,7 @@ const Dashboard = () => {
       descricao: 'Aventura no mundo de Arton',
       sistema: 'Tormenta20',
       jogadores: 6,
-      mestre: 'Você',
+      mestre: username || 'Você',
       proximaSessao: '2024-12-22'
     },
     {
@@ -68,7 +68,7 @@ const Dashboard = () => {
       descricao: 'Construa seu próprio reino',
       sistema: 'Pathfinder 2e',
       jogadores: 5,
-      mestre: 'Você'
+      mestre: username || 'Você'
     },
     {
       id: '6',
@@ -76,7 +76,7 @@ const Dashboard = () => {
       descricao: 'Intrigas vampíricas em Los Angeles',
       sistema: 'Vampire: The Masquerade',
       jogadores: 4,
-      mestre: 'Você',
+      mestre: username || 'Você',
       proximaSessao: '2024-12-25'
     }
   ]);
@@ -139,8 +139,8 @@ const Dashboard = () => {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-        <p className="text-gray-400">Bem-vindo de volta, {username || 'Aventureiro'}!</p>
+        <h1 className="text-3xl font-bold mb-2">Mesas</h1>
+        <p className="text-gray-400">Gerencie suas mesas de RPG</p>
       </div>
 
       {/* Stats */}
@@ -204,7 +204,7 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h2 className="text-2xl font-bold">Suas Mesas</h2>
-          <p className="text-gray-400">Gerencie e participe de mesas de RPG</p>
+          <p className="text-gray-400">Clique em uma mesa para entrar</p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -274,7 +274,7 @@ const Dashboard = () => {
                     value={novaMesa.jogadores}
                     onChange={(e) => setNovaMesa({...novaMesa, jogadores: parseInt(e.target.value) || 1})}
                     className="bg-gray-700 border-gray-600"
-/>
+                  />
                 </div>
               </div>
             </div>
@@ -289,6 +289,8 @@ const Dashboard = () => {
               </Button>
               <Button 
                 onClick={handleCriarMesa}
+                className="bg-gradient-to-r from-blue-600 to-purple-<Button 
+                onClick={handleCriarMesa}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 Criar Mesa
@@ -301,7 +303,7 @@ const Dashboard = () => {
       {/* Grid de Mesas - 12 colunas (3 colunas em desktop, 2 em tablet, 1 em mobile) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mesas.map((mesa) => (
-          <Card key={mesa.id} className="bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors">
+          <Card key={mesa.id} className="bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors cursor-pointer hover:scale-[1.02]">
             <CardHeader>
               <CardTitle className="text-xl">{mesa.nome}</CardTitle>
               <CardDescription className="text-gray-400">
