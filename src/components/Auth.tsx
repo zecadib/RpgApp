@@ -57,13 +57,8 @@ const Auth = () => {
         localStorage.setItem('stayLoggedIn', 'true');
       }
       
-      // Verificar se já tem username
-      const username = localStorage.getItem('nighshift_username');
-      if (username) {
-        navigate('/dashboard');
-      } else {
-        navigate('/onboarding');
-      }
+      // Redirecionar direto para dashboard
+      navigate('/dashboard');
     } catch (error: any) {
       showError(error.message || 'Erro ao fazer login');
     } finally {

@@ -7,13 +7,11 @@ import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireUsername?: boolean;
 }
 
-const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const [hasUsername, setHasUsername] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -21,29 +19,18 @@ const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRoutePro
 
   const checkAuth = async () => {
     try {
-      // Verificar se "Permanecer conectado" está ativo
-      const stayLoggedIn = localStorage.getItem('stayLoggedIn');
-      
       const { data: { user }, error } = await supabase.auth.getUser();
       
       if (error) {
         console.error('Erro ao verificar autenticação:', error);
         setAuthenticated(false);
-        setHasUsername(false);
         return;
       }
       
       setAuthenticated(!!user);
-      
-      if (user) {
-        // Verificar se tem username no localStorage
-        const username = localStorage.getItem('nighshift_username');
-        setHasUsername(!!username);
-      }
     } catch (error) {
       console.error('Erro ao verificar autenticação:', error);
       setAuthenticated(false);
-      setHasUsername(false);
     } finally {
       setLoading(false);
     }
@@ -62,11 +49,6 @@ const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRoutePro
 
   if (!authenticated) {
     return <Navigate to="/" replace />;
-  }
-
-  // Se requer username mas o usuário não tem, redirecionar para onboarding
-  if (requireUsername && !hasUsername) {
-    return <Navigate to="/onboarding" replace />;
   }
 
   return <>{children}</>;
