@@ -17,11 +17,26 @@ const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRoutePro
 
   useEffect(() => {
     checkAuth();
+    
+    // Verificar autenticação periodicamente
+    const interval = setInterval(() => {
+      checkAuth();
+    }, 30000); // Verificar a cada 30 segundos
+    
+    return () => clearInterval(interval);
   }, []);
 
   const checkAuth = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        setAuthenticated(false);
+        setHasUsername(false);
+        return;
+      }
+      
       setAuthenticated(!!user);
       
       if (user) {
@@ -32,6 +47,7 @@ const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRoutePro
     } catch (error) {
       console.error('Erro ao verificar autenticação:', error);
       setAuthenticated(false);
+      setHasUsername(false);
     } finally {
       setLoading(false);
     }

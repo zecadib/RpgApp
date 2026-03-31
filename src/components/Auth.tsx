@@ -68,6 +68,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       showSuccess('Logout realizado com sucesso!');
+      navigate('/');
     } catch (error: any) {
       showError(error.message || 'Erro ao fazer logout');
     }

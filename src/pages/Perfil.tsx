@@ -63,6 +63,10 @@ const Perfil = () => {
     setNewUsername(username || '');
   };
 
+  const handleGoToDashboard = () => {
+    navigate('/dashboard');
+  };
+
   const stats = [
     { label: 'Mesas Ativas', value: '3', icon: <User className="h-5 w-5" /> },
     { label: 'Personagens', value: '2', icon: <Award className="h-5 w-5" /> },
@@ -196,8 +200,8 @@ const Perfil = () => {
                     <span className="text-green-400">● Ativo</span>
                   </div>
 <Button 
-  onClick={() => navigate('/dashboard')}
-  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 mt-4"
+  onClick={handleGoToDashboard}
+  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700mt-4"
 >
   Ir para o Dashboard
 </Button>

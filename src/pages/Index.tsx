@@ -45,7 +45,7 @@ const Index = () => {
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
               <h2 className="text-2xl font-bold mb-4 text-purple-300">🚀 Comece Agora</h2>
               <p className="text-gray-300 mb-4">
-                Crie sua conta gratuitamente e comece a gerenciar suas aventuras de RPG de forma profissional.
+                Faça login ou crie sua conta gratuitamente para começar a gerenciar suas aventuras de RPG.
               </p>
               <div className="flex items-center gap-4 text-sm text-gray-400">
                 <div className="flex items-center gap-2">
