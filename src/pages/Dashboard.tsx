@@ -139,7 +139,12 @@ const Dashboard = () => {
           <div className="flex items-center gap-4">
             <div className="text-right">
               <div className="flex items-center gap-2">
-                <User className="h-4 w<Button 
+                <User className="h-4 w-4 text-gray-400" />
+                <p className="font-medium">{username || 'Usuário'}</p>
+              </div>
+              <p className="text-sm text-gray-400">{user?.email}</p>
+            </div>
+            <Button 
               variant="outline" 
               size="icon"
               onClick={handleLogout}
