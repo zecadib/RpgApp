@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { showSuccess, showError } from '@/utils/toast';
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -46,6 +48,7 @@ const Auth = () => {
       
       if (error) throw error;
       showSuccess('Login realizado com sucesso!');
+      navigate('/dashboard');
     } catch (error: any) {
       showError(error.message || 'Erro ao fazer login');
     } finally {
@@ -66,7 +69,7 @@ const Auth = () => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Autenticação RPG App</CardTitle>
+        <CardTitle>Nighshift</CardTitle>
         <CardDescription>
           Faça login ou cadastre-se para acessar o sistema
         </CardDescription>
