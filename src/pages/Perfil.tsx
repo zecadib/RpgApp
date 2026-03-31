@@ -146,7 +146,6 @@ const Perfil = () => {
                   <div key={index} className="p-4 bg-gray-800/30 rounded-lg border border-gray-700">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm text-gray-400">{stat.label}</span>
-                      <div className="p-<dyad-write path="src/pages/Perfil.tsx" description="Continuando página Perfil">
                       <div className="p-2 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg">
                         {stat.icon}
                       </div>
