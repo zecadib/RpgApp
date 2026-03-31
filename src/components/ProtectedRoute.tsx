@@ -25,7 +25,7 @@ const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRoutePro
       setAuthenticated(!!user);
       
       if (user) {
-        // Verificar se tem username no localStorage (simulação)
+        // Verificar se tem username no localStorage
         const username = localStorage.getItem('nighshift_username');
         setHasUsername(!!username);
       }

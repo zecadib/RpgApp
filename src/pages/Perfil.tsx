@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Mail, Calendar, Award, Edit } from 'lucide-react';
+import { User, Mail, Calendar, Award, Edit, Check, X } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/lib/supabase';
 
 const Perfil = () => {
+  const navigate = useNavigate();
   const { username, setUsername } = useUser();
   const [newUsername, setNewUsername] = useState(username || '');
   const [loading, setLoading] = useState(false);
@@ -44,11 +46,21 @@ const Perfil = () => {
       setUsername(newUsername);
       setIsEditing(false);
       showSuccess(`Nome atualizado para: ${newUsername}!`);
+      
+      // Redirecionar para dashboard após salvar
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } catch (error: any) {
       showError(error.message || 'Erro ao salvar nome de usuário');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setNewUsername(username || '');
   };
 
   const stats = [
@@ -61,7 +73,7 @@ const Perfil = () => {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Perfil</h1>
-        <p className="text-gray-400">Gerencie suas informações pessoais</p>
+        <p className="text-gray-400">Configure suas informações pessoais</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,9 +81,9 @@ const Perfil = () => {
         <div className="lg:col-span-2 space-y-6">
           <Card className="bg-gray-800/50 border-gray-700">
             <CardHeader>
-              <CardTitle>Informações Pessoais</CardTitle>
+              <CardTitle>Configurar Nome de Usuário</CardTitle>
               <CardDescription className="text-gray-400">
-                Atualize suas informações de perfil
+                Defina um nome que será exibido para outros jogadores
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -85,6 +97,7 @@ const Perfil = () => {
                       onChange={(e) => setNewUsername(e.target.value)}
                       className="bg-gray-700 border-gray-600"
                       disabled={!isEditing}
+                      placeholder="Ex: MestreGandalf"
                     />
                     {!isEditing ? (
                       <Button 
@@ -99,12 +112,10 @@ const Perfil = () => {
                       <div className="flex gap-2">
                         <Button 
                           variant="outline" 
-                          onClick={() => {
-                            setIsEditing(false);
-                            setNewUsername(username);
-                          }}
+                          onClick={handleCancelEdit}
                           className="border-gray-600 hover:bg-gray-700"
                         >
+                          <X className="h-4 w-4 mr-2" />
                           Cancelar
                         </Button>
                         <Button 
@@ -112,11 +123,15 @@ const Perfil = () => {
                           disabled={loading}
                           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                         >
+                          <Check className="h-4 w-4 mr-2" />
                           {loading ? 'Salvando...' : 'Salvar'}
                         </Button>
                       </div>
                     )}
                   </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Mínimo de 3 caracteres. Este nome será visível para outros jogadores.
+                  </p>
                 </div>
 
                 <div>
@@ -167,7 +182,7 @@ const Perfil = () => {
                   <User className="h-16 w-16 text-white" />
                 </div>
                 
-                <h3 className="text-xl font-bold mb-1">{username || 'Usuário'}</h3>
+                <h3 className="text-xl font-bold mb-1">{username || 'Sem nome definido'}</h3>
                 <p className="text-gray-400 mb-4">Mestre de RPG</p>
                 
                 <div className="w-full space-y-3">
@@ -180,11 +195,12 @@ const Perfil = () => {
                     <span className="text-sm text-gray-400">Status</span>
                     <span className="text-green-400">● Ativo</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
-                    <span className="text-sm text-gray-400">Tipo de Conta</span>
-                    <span className="text-blue-400">Gratuita</span>
-                  </div>
+<Button 
+  onClick={() => navigate('/dashboard')}
+  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 mt-4"
+>
+  Ir para o Dashboard
+</Button>
                 </div>
               </div>
             </CardContent>

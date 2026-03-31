@@ -29,12 +29,6 @@ const Sidebar = () => {
       path: '/dashboard'
     },
     {
-      id: 'mesas',
-      title: 'Mesas',
-      icon: <Users className="h-5 w-5" />,
-      path: '/dashboard'
-    },
-    {
       id: 'personagens',
       title: 'Personagens',
       icon: <User className="h-5 w-5" />,
