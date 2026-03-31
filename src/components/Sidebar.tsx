@@ -11,7 +11,8 @@ import {
   UserCircle,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Settings
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/lib/supabase';
@@ -47,6 +48,12 @@ const Sidebar = () => {
       title: 'Perfil',
       icon: <UserCircle className="h-5 w-5" />,
       path: '/perfil'
+    },
+    {
+      id: 'configuracoes',
+      title: 'Configurações',
+      icon: <Settings className="h-5 w-5" />,
+      path: '/configuracoes'
     }
   ];
 
