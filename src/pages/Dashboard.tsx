@@ -147,7 +147,7 @@ const Dashboard = () => {
                 <User className="h-4 w-4 text-gray-400" />
                 <p className="font-medium">{username || 'Usuário'}</p>
               </div>
-              <p className="text-sm text-gray-400">Mestre</p>
+              <p className="text-sm text-gray-400">{user?.email}</p>
             </div>
             <Button 
               variant="outline" 
@@ -212,7 +212,7 @@ const Dashboard = () => {
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple<Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                 <Plus className="mr-2 h-4 w-4" />
                 Nova Mesa
               </Button>

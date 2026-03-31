@@ -117,8 +117,8 @@ const Onboarding = () => {
           
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="font-medium">{user?.email}</p>
-              <p className="text-sm text-gray-400">Novo usuário</p>
+              <p className="font-medium">{username || 'Definindo nome...'}</p>
+              <p className="text-sm text-gray-400">{user?.email}</p>
             </div>
             <Button 
               variant="outline" 
