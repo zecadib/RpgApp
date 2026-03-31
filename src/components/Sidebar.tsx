@@ -8,14 +8,11 @@ import {
   User, 
   Gamepad2, 
   Settings, 
-  LogOut, 
   ChevronLeft, 
   ChevronRight,
   Home,
   UserCircle
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { showSuccess, showError } from '@/utils/toast';
 import { useUser } from '@/contexts/UserContext';
 
 const Sidebar = () => {
@@ -25,6 +22,12 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const menuItems = [
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      icon: <Home className="h-5 w-5" />,
+      path: '/dashboard'
+    },
     {
       id: 'mesas',
       title: 'Mesas',
@@ -56,17 +59,6 @@ const Sidebar = () => {
       path: '/configuracoes'
     }
   ];
-
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      showSuccess('Logout realizado com sucesso!');
-      navigate('/');
-    } catch (error: any) {
-      showError(error.message || 'Erro ao fazer logout');
-    }
-  };
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -116,24 +108,14 @@ const Sidebar = () => {
         ))}
       </div>
 
-      {/* User Info & Logout */}
+      {/* User Info */}
       <div className="p-4 border-t border-gray-800">
         {!collapsed && (
-          <div className="mb-4">
+          <div>
             <p className="text-sm font-medium text-white truncate">{username || 'Usuário'}</p>
             <p className="text-xs text-gray-400 truncate">Bem-vindo ao Nighshift</p>
           </div>
         )}
-        <Button
-          variant="ghost"
-          className={`w-full justify-start text-gray-400 hover:text-white hover:bg-gray-800 ${collapsed ? 'justify-center' : ''}`}
-          onClick={handleLogout}
-        >
-          <div className="flex items-center gap-3">
-            <LogOut className="h-5 w-5" />
-            {!collapsed && <span>Sair</span>}
-          </div>
-        </Button>
       </div>
     </div>
   );

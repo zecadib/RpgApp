@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Onboarding from "./pages/Onboarding";
-import Mesas from "./pages/Mesas";
+import Dashboard from "./pages/Dashboard";
 import Personagens from "./pages/Personagens";
 import Sistemas from "./pages/Sistemas";
 import Perfil from "./pages/Perfil";
@@ -39,7 +39,7 @@ const App = () => (
               element={
                 <ProtectedRoute requireUsername={true}>
                   <Layout>
-                    <Mesas />
+                    <Dashboard />
                   </Layout>
                 </ProtectedRoute>
               } 

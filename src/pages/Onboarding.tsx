@@ -44,6 +44,10 @@ const Onboarding = () => {
     navigate('/dashboard');
   };
 
+  const handleGoToMesas = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
       <div className="container mx-auto px-4 py-8">
@@ -65,7 +69,7 @@ const Onboarding = () => {
                 Escolha um nome que será exibido para outros jogadores
               </CardDescription>
             </CardHeader>
-            <CardContent>
+           <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="username">Nome de Usuário</Label>
@@ -123,7 +127,7 @@ const Onboarding = () => {
                   if (!usernameSaved) {
                     showError('Primeiro salve seu nome de usuário!');
                   } else {
-                    navigate('/dashboard');
+                    handleGoToMesas();
                   }
                 }}
               >
