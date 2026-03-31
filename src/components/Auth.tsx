@@ -48,7 +48,14 @@ const Auth = () => {
       
       if (error) throw error;
       showSuccess('Login realizado com sucesso!');
-      navigate('/dashboard');
+      
+      // Verificar se já tem username
+      const username = localStorage.getItem('nighshift_username');
+      if (username) {
+        navigate('/dashboard');
+      } else {
+        navigate('/onboarding');
+      }
     } catch (error: any) {
       showError(error.message || 'Erro ao fazer login');
     } finally {
@@ -134,38 +141,39 @@ const Auth = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="password-signup" className="text-sm font-medium">
-                  Senha
-                </label>
-                <Input
-                  id="password-signup"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Carregando...' : 'Cadastrar'}
-              </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
-        
-        <div className="mt-6 pt-6 border-t">
-          <Button 
-            variant="outline" 
-            className="w-full" 
-            onClick={handleSignOut}
-          >
-            Sair
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-export default Auth;
+                <label htmlFor="password-signup<dyad-write path="src/components/Auth.tsx" description="Completando o componente Auth">
+                  <label htmlFor="password-signup" className="text-sm font-medium">
+                    Senha
+                  </label>
+                  <Input
+                    id="password-signup"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Carregando...' : 'Cadastrar'}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="mt-6 pt-6 border-t">
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={handleSignOut}
+            >
+              Sair
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  export default Auth;

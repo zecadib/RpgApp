@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, Users, Calendar, Sword, LogOut } from 'lucide-react';
+import { Plus, Users, Calendar, Sword, LogOut, User } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 
 interface Mesa {
@@ -62,6 +62,7 @@ const Dashboard = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [username, setUsername] = useState<string>('');
 
   useEffect(() => {
     checkUser();
@@ -73,6 +74,14 @@ const Dashboard = () => {
       navigate('/');
     } else {
       setUser(user);
+      // Pegar username do localStorage
+      const savedUsername = localStorage.getItem('nighshift_username');
+      if (savedUsername) {
+        setUsername(savedUsername);
+      } else {
+        // Se não tem username, redirecionar para onboarding
+        navigate('/onboarding');
+      }
     }
   };
 
@@ -80,6 +89,8 @@ const Dashboard = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      // Limpar username do localStorage
+      localStorage.removeItem('nighshift_username');
       showSuccess('Logout realizado com sucesso!');
       navigate('/');
     } catch (error: any) {
@@ -99,7 +110,7 @@ const Dashboard = () => {
       descricao: novaMesa.descricao,
       sistema: novaMesa.sistema,
       jogadores: novaMesa.jogadores,
-      mestre: user?.email || 'Você'
+      mestre: username || user?.email || 'Você'
     };
 
     setMesas([novaMesaObj, ...mesas]);
@@ -132,7 +143,10 @@ const Dashboard = () => {
           
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="font-medium">{user?.email}</p>
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-gray-400" />
+                <p className="font-medium">{username || 'Usuário'}</p>
+              </div>
               <p className="text-sm text-gray-400">Mestre</p>
             </div>
             <Button 
