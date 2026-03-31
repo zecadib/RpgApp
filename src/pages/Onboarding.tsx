@@ -8,13 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lock, Users, User, Gamepad2, LogOut } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
+import { useUser } from '@/contexts/UserContext';
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const { username, setUsername } = useUser();
+  const [newUsername, setNewUsername] = useState(username || '');
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     checkUser();
@@ -26,37 +27,28 @@ const Onboarding = () => {
       navigate('/');
     } else {
       setUser(user);
-      // Verificar se já tem perfil
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      
-      if (profile?.username) {
-        // Já tem username, redirecionar para dashboard
+      // Se já tem username, redirecionar para dashboard
+      if (username) {
         navigate('/dashboard');
       }
     }
   };
 
   const handleSaveUsername = async () => {
-    if (!username.trim()) {
+    if (!newUsername.trim()) {
       showError('Digite um nome de usuário');
       return;
     }
 
-    if (username.length < 3) {
+    if (newUsername.length < 3) {
       showError('O nome de usuário deve ter pelo menos 3 caracteres');
       return;
     }
 
     setLoading(true);
     try {
-      // Aqui você pode salvar no banco de dados
-      // Por enquanto, vamos apenas salvar no localStorage
-      localStorage.setItem('nighshift_username', username);
-      showSuccess(`Bem-vindo, ${username}!`);
+      setUsername(newUsername);
+      showSuccess(`Bem-vindo, ${newUsername}!`);
       navigate('/dashboard');
     } catch (error: any) {
       showError(error.message || 'Erro ao salvar nome de usuário');
@@ -117,7 +109,7 @@ const Onboarding = () => {
           
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="font-medium">{username || 'Definindo nome...'}</p>
+              <p className="font-medium">{newUsername || 'Definindo nome...'}</p>
               <p className="text-sm text-gray-400">{user?.email}</p>
             </div>
             <Button 
@@ -146,27 +138,28 @@ const Onboarding = () => {
                   <label htmlFor="username" className="block text-sm font-medium mb-2">
                     Nome de usuário
                   </label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Ex: MestreDungeon"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-white"
-                    onKeyDown={(e) => e.key === 'Enter' && handleSaveUsername()}
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="Ex: MestreDungeon"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="bg-gray-700 border-gray-600 text-white flex-1"
+                      onKeyDown={(e) => e.key === 'Enter' && handleSaveUsername()}
+                    />
+                    <Button 
+                      onClick={handleSaveUsername}
+                      disabled={loading || !newUsername.trim()}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 whitespace-nowrap"
+                    >
+                      {loading ? 'Salvando...' : 'Salvar'}
+                    </Button>
+                  </div>
                   <p className="text-sm text-gray-400 mt-2">
                     Este será o nome que outros jogadores verão
                   </p>
                 </div>
-                
-                <Button 
-                  onClick={handleSaveUsername}
-                  disabled={loading || !username.trim()}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                >
-                  {loading ? 'Salvando...' : 'Salvar e Continuar'}
-                </Button>
               </div>
             </CardContent>
           </Card>
