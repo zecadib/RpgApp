@@ -1,4 +1,97 @@
-<div className="flex flex-col md:flex-row items-center justify-between gap-4">
+"use client";
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Users, User, Gamepad2, Lock, ArrowRight } from 'lucide-react';
+import { showSuccess, showError } from '@/utils/toast';
+import { useUser } from '@/contexts/UserContext';
+
+const Onboarding = () => {
+  const navigate = useNavigate();
+  const { username, setUsername } = useUser();
+  const [newUsername, setNewUsername] = useState(username || '');
+  const [loading, setLoading] = useState(false);
+  const [usernameSaved, setUsernameSaved] = useState(!!username);
+
+  const handleSaveUsername = async () => {
+    if (!newUsername.trim()) {
+      showError('Digite um nome de usuário');
+      return;
+    }
+
+    if (newUsername.length < 3) {
+      showError('O nome de usuário deve ter pelo menos 3 caracteres');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      setUsername(newUsername);
+      setUsernameSaved(true);
+      showSuccess(`Nome de usuário salvo: ${newUsername}!`);
+    } catch (error: any) {
+      showError(error.message || 'Erro ao salvar nome de usuário');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    navigate('/dashboard');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+      <div className="container mx-auto px-4 py-8">
+        <header className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            Bem-vindo ao Nighshift! 🎲
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Primeiro, vamos configurar seu perfil para começar a gerenciar suas mesas de RPG
+          </p>
+        </header>
+
+        <div className="max-w-4xl mx-auto">
+          {/* Configuração do Username */}
+          <Card className="bg-gray-800/50 border-gray-700 mb-8">
+            <CardHeader>
+              <CardTitle>👤 Configurar Nome de Usuário</CardTitle>
+              <CardDescription className="text-gray-400">
+                Escolha um nome que será exibido para outros jogadores
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">Nome de Usuário</Label>
+                  <Input
+                    id="username"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value)}
+                    placeholder="Ex: MestreGandalf"
+                    className="bg-gray-700 border-gray-600"
+                    disabled={usernameSaved}
+                  />
+                  <p className="text-sm text-gray-400">
+                    Mínimo de 3 caracteres. Pode conter letras, números e underscores.
+                  </p>
+                </div>
+
+                {!usernameSaved ? (
+                  <Button 
+                    onClick={handleSaveUsername}
+                    disabled={loading || !newUsername.trim()}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    {loading ? 'Salvando...' : 'Salvar Nome de Usuário'}
+                  </Button>
+                ) : (
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
                       <h3 className="text-xl font-bold mb-2">🎉 Tudo pronto!</h3>
                       <p className="text-gray-300">
@@ -13,10 +106,10 @@
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Menu de funcionalidades */}
           <div className="mb-8">
