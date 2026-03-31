@@ -199,12 +199,13 @@ const Perfil = () => {
                     <span className="text-sm text-gray-400">Status</span>
                     <span className="text-green-400">● Ativo</span>
                   </div>
-<Button 
-  onClick={handleGoToDashboard}
-  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700mt-4"
->
-  Ir para o Dashboard
-</Button>
+                  
+                  <Button 
+                    onClick={handleGoToDashboard}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 mt-4"
+                  >
+                    Ir para o Dashboard
+                  </Button>
                 </div>
               </div>
             </CardContent>

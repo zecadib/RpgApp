@@ -17,17 +17,13 @@ const ProtectedRoute = ({ children, requireUsername = false }: ProtectedRoutePro
 
   useEffect(() => {
     checkAuth();
-    
-    // Verificar autenticação periodicamente
-    const interval = setInterval(() => {
-      checkAuth();
-    }, 30000); // Verificar a cada 30 segundos
-    
-    return () => clearInterval(interval);
   }, []);
 
   const checkAuth = async () => {
     try {
+      // Verificar se "Permanecer conectado" está ativo
+      const stayLoggedIn = localStorage.getItem('stayLoggedIn');
+      
       const { data: { user }, error } = await supabase.auth.getUser();
       
       if (error) {
