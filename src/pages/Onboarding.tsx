@@ -1,228 +1,108 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lock, Users, User, Gamepad2, LogOut } from 'lucide-react';
-import { showSuccess, showError } from '@/utils/toast';
-import { useUser } from '@/contexts/UserContext';
-
-const Onboarding = () => {
-  const navigate = useNavigate();
-  const { username, setUsername } = useUser();
-  const [newUsername, setNewUsername] = useState(username || '');
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [usernameSaved, setUsernameSaved] = useState(false);
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate('/');
-    } else {
-      setUser(user);
-      // Se já tem username, marcar como salvo
-      if (username) {
-        setUsernameSaved(true);
-      }
-    }
-  };
-
-  const handleSaveUsername = async () => {
-    if (!newUsername.trim()) {
-      showError('Digite um nome de usuário');
-      return;
-    }
-
-    if (newUsername.length < 3) {
-      showError('O nome de usuário deve ter pelo menos 3 caracteres');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      setUsername(newUsername);
-      setUsernameSaved(true);
-      showSuccess(`Nome salvo: ${newUsername}!`);
-    } catch (error: any) {
-      showError(error.message || 'Erro ao salvar nome de usuário');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      showSuccess('Logout realizado com sucesso!');
-      navigate('/');
-    } catch (error: any) {
-      showError(error.message || 'Erro ao fazer logout');
-    }
-  };
-
-  const menuItems = [
-    {
-      id: 'mesas',
-      title: 'Mesas',
-      description: 'Gerencie suas mesas de RPG',
-      icon: <Users className="h-6 w-6" />,
-      enabled: true,
-      onClick: () => {
-        if (!usernameSaved) {
-          showError('Primeiro salve seu nome de usuário!');
-        } else {
-          navigate('/dashboard');
-        }
-      }
-    },
-    {
-      id: 'personagens',
-      title: 'Personagens',
-      description: 'Crie e gerencie seus personagens',
-      icon: <User className="h-6 w-6" />,
-      enabled: false,
-      onClick: () => showError('Funcionalidade em breve!')
-    },
-    {
-      id: 'sistemas',
-      title: 'Sistemas',
-      description: 'Explore sistemas de RPG',
-      icon: <Gamepad2 className="h-6 w-6" />,
-      enabled: false,
-      onClick: () => showError('Funcionalidade em breve!')
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-              Nighshift
-            </h1>
-            <p className="text-gray-400">Configure sua conta para começar</p>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="font-medium">{newUsername || 'Definindo nome...'}</p>
-              <p className="text-sm text-gray-400">{user?.email}</p>
-            </div>
-            <Button 
-              variant="outline" 
-              size="icon"
-              onClick={handleLogout}
-              className="border-gray-700 hover:bg-gray-800"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </header>
-
-        <div className="max-w-4xl mx-auto">
-          {/* Card de configuração de username */}
-          <Card className="bg-gray-800/50 border-gray-700 mb-8">
-            <CardHeader>
-              <CardTitle className="text-2xl">👋 Bem-vindo ao Nighshift!</CardTitle>
-              <CardDescription className="text-gray-400">
-                Primeiro, escolha como você será chamado na plataforma
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium mb-2">
-                    Nome de usuário
-                  </label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="Ex: MestreDungeon"
-                      value={newUsername}
-                      onChange={(e) => setNewUsername(e.target.value)}
-                      className="bg-gray-700 border-gray-600 text-white flex-1"
-                      onKeyDown={(e) => e.key === 'Enter' && handleSaveUsername()}
-                    />
+<div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-bold mb-2">🎉 Tudo pronto!</h3>
+                      <p className="text-gray-300">
+                        Seu nome de usuário foi configurado. Agora você pode acessar todas as funcionalidades do Nighshift.
+                      </p>
+                    </div>
                     <Button 
-                      onClick={handleSaveUsername}
-                      disabled={loading || !newUsername.trim()}
+                      onClick={handleGoToDashboard}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 whitespace-nowrap"
                     >
-                      {loading ? 'Salvando...' : 'Salvar'}
+                      Ir para o Dashboard
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-sm text-gray-400 mt-2">
-                    Este será o nome que outros jogadores verão
-                  </p>
-                  {usernameSaved && (
-                    <div className="mt-2">
-                      <span className="text-sm text-green-400">✓ Nome salvo com sucesso!</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* Menu de funcionalidades */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-6">O que você pode fazer</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {menuItems.map((item) => (
-                <Card 
-                  key={item.id}
-                  className={`bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors cursor-pointer ${
-                    !item.enabled ? 'opacity-60' : ''
-                  } ${item.id === 'mesas' && !usernameSaved ? 'opacity-60' : ''}`}
-                  onClick={item.onClick}
-                >
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`p-3 rounded-lg ${
-                        item.enabled && (item.id !== 'mesas' || usernameSaved)
-                          ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20' 
-                          : 'bg-gray-700'
-                      }`}>
-                        {item.icon}
-                      </div>
-                      {!item.enabled && (
-                        <Lock className="h-5 w-5 text-gray-500" />
-                      )}
+              <Card 
+                className={`bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors cursor-pointer ${
+                  !usernameSaved ? 'opacity-60' : ''
+                }`}
+                onClick={() => {
+                  if (!usernameSaved) {
+                    showError('Primeiro salve seu nome de usuário!');
+                  } else {
+                    navigate('/dashboard');
+                  }
+                }}
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-lg ${
+                      usernameSaved
+                        ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20' 
+                        : 'bg-gray-700'
+                    }`}>
+                      <Users className="h-6 w-6" />
                     </div>
-                    
-                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-400">{item.description}</p>
-                    
-                    {!item.enabled && (
-                      <div className="mt-4">
-                        <span className="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">
-                          Em breve
-                        </span>
-                      </div>
-                    )}
-                    
-                    {item.id === 'mesas' && !usernameSaved && (
-                      <div className="mt-4">
-                        <span className="text-xs px-2 py-1 bg-yellow-700 rounded-full text-yellow-300">
-                          Salve seu nome primeiro
-                        </span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                  </div>
+                  
+                  <h3 className="font-bold text-lg mb-2">Mesas</h3>
+                  <p className="text-sm text-gray-400">Gerencie suas mesas de RPG</p>
+                  
+                  {!usernameSaved && (
+                    <div className="mt-4">
+                      <span className="text-xs px-2 py-1 bg-yellow-700 rounded-full text-yellow-300">
+                        Salve seu nome primeiro
+                      </span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="bg-gray-800/50 border-gray-700 opacity-60 cursor-not-allowed"
+                onClick={() => showError('Funcionalidade em breve!')}
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="p-3 rounded-lg bg-gray-700">
+                      <User className="h-6 w-6" />
+                    </div>
+                    <Lock className="h-5 w-5 text-gray-500" />
+                  </div>
+                  
+                  <h3 className="font-bold text-lg mb-2">Personagens</h3>
+                  <p className="text-sm text-gray-400">Crie e gerencie seus personagens</p>
+                  
+                  <div className="mt-4">
+                    <span className="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">
+                      Em breve
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="bg-gray-800/50 border-gray-700 opacity-60 cursor-not-allowed"
+                onClick={() => showError('Funcionalidade em breve!')}
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="p-3 rounded-lg bg-gray-700">
+                      <Gamepad2 className="h-6 w-6" />
+                    </div>
+                    <Lock className="h-5 w-5 text-gray-500" />
+                  </div>
+                  
+                  <h3 className="font-bold text-lg mb-2">Sistemas</h3>
+                  <p className="text-sm text-gray-400">Explore sistemas de RPG</p>
+                  
+                  <div className="mt-4">
+                    <span className="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">
+                      Em breve
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
@@ -237,7 +117,7 @@ const Onboarding = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-sm">2</span>
-                  <span>Clique em "Mesas" para criar ou entrar em uma mesa de RPG</span>
+                  <span>Clique em "Ir para o Dashboard" para acessar suas mesas</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-sm">3</span>
