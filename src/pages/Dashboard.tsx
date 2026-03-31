@@ -289,8 +289,6 @@ const Dashboard = () => {
               </Button>
               <Button 
                 onClick={handleCriarMesa}
-                className="bg-gradient-to-r from-blue-600 to-purple-<Button 
-                onClick={handleCriarMesa}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 Criar Mesa
