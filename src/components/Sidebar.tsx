@@ -11,9 +11,12 @@ import {
   ChevronLeft, 
   ChevronRight,
   Home,
-  UserCircle
+  UserCircle,
+  LogOut
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { supabase } from '@/lib/supabase';
+import { showSuccess, showError } from '@/utils/toast';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -56,6 +59,17 @@ const Sidebar = () => {
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      showSuccess('Logout realizado com sucesso!');
+      navigate('/');
+    } catch (error: any) {
+      showError(error.message || 'Erro ao fazer logout');
+    }
   };
 
   return (
@@ -102,14 +116,23 @@ const Sidebar = () => {
         ))}
       </div>
 
-      {/* User Info */}
-      <div className="p-4 border-t border-gray-800">
-        {!collapsed && (
-          <div>
-            <p className="text-sm font-medium text-white truncate">{username || 'Usuário'}</p>
+      {/* User Info e Logout */}
+      <div className="p-4 border-t border-gray-800 space-y-4">
+        {!collapsed && username && (
+          <div className="mb-2">
+            <p className="text-sm font-medium text-white truncate">{username}</p>
             <p className="text-xs text-gray-400 truncate">Bem-vindo ao Nighshift</p>
           </div>
         )}
+        
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-800"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-5 w-5" />
+          {!collapsed && <span className="ml-3">Sair</span>}
+        </Button>
       </div>
     </div>
   );

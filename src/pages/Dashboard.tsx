@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, Users, Calendar, Sword, LogOut, User } from 'lucide-react';
+import { Plus, Users, Calendar, Sword, User } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { useUser } from '@/contexts/UserContext';
 
@@ -52,6 +52,32 @@ const Dashboard = () => {
       jogadores: 5,
       mestre: 'Lovecraft',
       proximaSessao: '2024-12-20'
+    },
+    {
+      id: '4',
+      nome: 'Tormenta20 - Aventura Épica',
+      descricao: 'Aventura no mundo de Arton',
+      sistema: 'Tormenta20',
+      jogadores: 6,
+      mestre: 'Você',
+      proximaSessao: '2024-12-22'
+    },
+    {
+      id: '5',
+      nome: 'Pathfinder 2e - Kingmaker',
+      descricao: 'Construa seu próprio reino',
+      sistema: 'Pathfinder 2e',
+      jogadores: 5,
+      mestre: 'Você'
+    },
+    {
+      id: '6',
+      nome: 'Vampire: The Masquerade',
+      descricao: 'Intrigas vampíricas em Los Angeles',
+      sistema: 'Vampire: The Masquerade',
+      jogadores: 4,
+      mestre: 'Você',
+      proximaSessao: '2024-12-25'
     }
   ]);
   
@@ -78,17 +104,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      showSuccess('Logout realizado com sucesso!');
-      navigate('/');
-    } catch (error: any) {
-      showError(error.message || 'Erro ao fazer logout');
-    }
-  };
-
   const handleCriarMesa = () => {
     if (!novaMesa.nome.trim()) {
       showError('Digite um nome para a mesa');
@@ -101,7 +116,7 @@ const Dashboard = () => {
       descricao: novaMesa.descricao,
       sistema: novaMesa.sistema,
       jogadores: novaMesa.jogadores,
-      mestre: username || user?.email || 'Você'
+      mestre: username || 'Você'
     };
 
     setMesas([novaMesaObj, ...mesas]);
@@ -123,33 +138,13 @@ const Dashboard = () => {
   return (
     <div className="p-8">
       {/* Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-gray-400">Bem-vindo de volta, {username || 'Aventureiro'}!</p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-gray-400" />
-              <p className="font-medium">{username || 'Usuário'}</p>
-            </div>
-            <p className="text-sm text-gray-400">{user?.email}</p>
-          </div>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleLogout}
-            className="border-gray-700 hover:bg-gray-800"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="text-gray-400">Bem-vindo de volta, {username || 'Aventureiro'}!</p>
+      </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -186,6 +181,20 @@ const Dashboard = () => {
                 </p>
               </div>
               <Calendar className="h-8 w-8 text-purple-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Você é Mestre</p>
+                <p className="text-2xl font-bold">
+                  {mesas.filter(m => m.mestre === username || m.mestre === 'Você').length}
+                </p>
+              </div>
+              <User className="h-8 w-8 text-yellow-400" />
             </div>
           </CardContent>
         </Card>
@@ -250,6 +259,7 @@ const Dashboard = () => {
                     <option value="Cyberpunk RED">Cyberpunk RED</option>
                     <option value="Call of Cthulhu">Call of Cthulhu</option>
                     <option value="Tormenta20">Tormenta20</option>
+                    <option value="Vampire: The Masquerade">Vampire: The Masquerade</option>
                     <option value="Outro">Outro</option>
                   </select>
                 </div>
@@ -264,7 +274,7 @@ const Dashboard = () => {
                     value={novaMesa.jogadores}
                     onChange={(e) => setNovaMesa({...novaMesa, jogadores: parseInt(e.target.value) || 1})}
                     className="bg-gray-700 border-gray-600"
-                  />
+/>
                 </div>
               </div>
             </div>
@@ -288,7 +298,7 @@ const Dashboard = () => {
         </Dialog>
       </div>
 
-      {/* Grid de Mesas */}
+      {/* Grid de Mesas - 12 colunas (3 colunas em desktop, 2 em tablet, 1 em mobile) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mesas.map((mesa) => (
           <Card key={mesa.id} className="bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors">

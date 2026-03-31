@@ -7,12 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { showSuccess, showError } from '@/utils/toast';
 
 const Auth = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [stayLoggedIn, setStayLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -49,6 +52,11 @@ const Auth = () => {
       if (error) throw error;
       showSuccess('Login realizado com sucesso!');
       
+      // Se "Permanecer conectado" estiver marcado, salvar no localStorage
+      if (stayLoggedIn) {
+        localStorage.setItem('stayLoggedIn', 'true');
+      }
+      
       // Verificar se já tem username
       const username = localStorage.getItem('nighshift_username');
       if (username) {
@@ -67,6 +75,7 @@ const Auth = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      localStorage.removeItem('stayLoggedIn');
       showSuccess('Logout realizado com sucesso!');
       navigate('/');
     } catch (error: any) {
@@ -92,9 +101,7 @@ const Auth = () => {
           <TabsContent value="login">
             <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="email-login" className="text-sm font-medium">
-                  Email
-                </label>
+                <Label htmlFor="email-login">Email</Label>
                 <Input
                   id="email-login"
                   type="email"
@@ -106,9 +113,7 @@ const Auth = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="password-login" className="text-sm font-medium">
-                  Senha
-                </label>
+                <Label htmlFor="password-login">Senha</Label>
                 <Input
                   id="password-login"
                   type="password"
@@ -117,6 +122,17 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="stay-logged-in" 
+                  checked={stayLoggedIn}
+                  onCheckedChange={(checked) => setStayLoggedIn(checked as boolean)}
+                />
+                <Label htmlFor="stay-logged-in" className="text-sm font-normal">
+                  Permanecer conectado
+                </Label>
               </div>
               
               <Button type="submit" className="w-full" disabled={loading}>
@@ -128,9 +144,7 @@ const Auth = () => {
           <TabsContent value="signup">
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="email-signup" className="text-sm font-medium">
-                  Email
-                </label>
+                <Label htmlFor="email-signup">Email</Label>
                 <Input
                   id="email-signup"
                   type="email"
@@ -142,9 +156,7 @@ const Auth = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="password-signup" className="text-sm font-medium">
-                  Senha
-                </label>
+                <Label htmlFor="password-signup">Senha</Label>
                 <Input
                   id="password-signup"
                   type="password"
