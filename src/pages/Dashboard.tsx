@@ -5,10 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Calendar, Sword, User, LogOut } from 'lucide-react';
+import { Users, Calendar, Sword, User } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { useUser } from '@/contexts/UserContext';
 import CriarMesaModal from '@/components/CriarMesaModal';
+import LayoutPadrao from '@/components/LayoutPadrao';
 
 interface Mesa {
   id: string;
@@ -125,70 +126,54 @@ const Dashboard = () => {
     navigate(`/sala/${slug}`);
   };
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      localStorage.removeItem('stayLoggedIn');
-      showSuccess('Logout realizado com sucesso!');
-      navigate('/');
-    } catch (error: any) {
-      showError(error.message || 'Erro ao fazer logout');
-    }
-  };
-
   const handleMesaCriada = () => {
     carregarMesas();
   };
 
-  if (!tablesExist) {
-    return (
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-gray-400">Gerencie suas mesas de RPG</p>
-        </div>
-
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-xl text-red-400">Configuração Necessária</CardTitle>
-            <CardDescription className="text-gray-400">
-              As tabelas do banco de dados precisam ser criadas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-gray-300">
-                Para usar o sistema de mesas, você precisa executar o SQL no Supabase:
-              </p>
-              <ol className="list-decimal list-inside space-y-2 text-gray-300">
-                <li>Acesse o painel do Supabase</li>
-                <li>Vá para "SQL Editor"</li>
-                <li>Cole o SQL do arquivo <code>supabase/migrations/20241215_create_mesas_tables_fixed.sql</code></li>
-                <li>Execute o SQL</li>
-              </ol>
-              <div className="bg-gray-900 p-4 rounded-lg">
-                <p className="text-sm text-gray-400 mb-2">SQL para executar:</p>
-                <code className="text-xs text-gray-300">
-                  CREATE TABLE IF NOT EXISTS public.mesas (...);
-                </code>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              onClick={carregarMesas}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              Tentar Novamente
-            </Button>
-          </CardFooter>
-        </Card>
+  const content = !tablesExist ? (
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="text-gray-400">Gerencie suas mesas de RPG</p>
       </div>
-    );
-  }
 
-  return (
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-xl text-red-400">Configuração Necessária</CardTitle>
+          <CardDescription className="text-gray-400">
+            As tabelas do banco de dados precisam ser criadas
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p className="text-gray-300">
+              Para usar o sistema de mesas, você precisa executar o SQL no Supabase:
+            </p>
+            <ol className="list-decimal list-inside space-y-2 text-gray-300">
+              <li>Acesse o painel do Supabase</li>
+              <li>Vá para "SQL Editor"</li>
+              <li>Cole o SQL do arquivo <code>supabase/migrations/20241215_create_mesas_tables_fixed.sql</code></li>
+              <li>Execute o SQL</li>
+            </ol>
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <p className="text-sm text-gray-400 mb-2">SQL para executar:</p>
+              <code className="text-xs text-gray-300">
+                CREATE TABLE IF NOT EXISTS public.mesas (...);
+              </code>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button 
+            onClick={carregarMesas}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            Tentar Novamente
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  ) : (
     <div className="p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -199,14 +184,6 @@ const Dashboard = () => {
         
         <div className="flex gap-2">
           <CriarMesaModal onMesaCriada={handleMesaCriada} />
-          <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            className="border-gray-600 hover:bg-gray-700"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sair
-          </Button>
         </div>
       </div>
 
@@ -276,7 +253,7 @@ const Dashboard = () => {
       </div>
 
       {/* Grid de Mesas */}
-      {loading ? (
+      {{loading ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p className="text-gray-400">Carregando mesas...</p>
@@ -341,6 +318,12 @@ const Dashboard = () => {
         </div>
       )}
     </div>
+  );
+
+  return (
+    <LayoutPadrao>
+      {content}
+    </LayoutPadrao>
   );
 };
 

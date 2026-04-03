@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Users, Lock } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
+import LayoutPadrao from '@/components/LayoutPadrao';
 
 const EntrarNaMesa = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -132,7 +133,7 @@ const EntrarNaMesa = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-4">
+    <LayoutPadrao>
       <div className="container mx-auto max-w-md">
         <Button
           variant="ghost"
@@ -219,7 +220,7 @@ const EntrarNaMesa = () => {
           </div>
         </Card>
       </div>
-    </div>
+    </LayoutPadrao>
   );
 };
 

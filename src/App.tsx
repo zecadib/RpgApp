@@ -14,7 +14,6 @@ import Sala from "./pages/Sala";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./contexts/UserContext";
-import Layout from "./components/Layout";
 
 const queryClient = new QueryClient();
 
@@ -31,9 +30,7 @@ const App = () => (
               path="/dashboard" 
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
+                  <Dashboard />
                 </ProtectedRoute>
               } 
             />
@@ -41,9 +38,7 @@ const App = () => (
               path="/personagens" 
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Personagens />
-                  </Layout>
+                  <Personagens />
                 </ProtectedRoute>
               } 
             />
@@ -51,9 +46,7 @@ const App = () => (
               path="/sistemas" 
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Sistemas />
-                  </Layout>
+                  <Sistemas />
                 </ProtectedRoute>
               } 
             />
@@ -61,9 +54,7 @@ const App = () => (
               path="/perfil" 
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Perfil />
-                  </Layout>
+                  <Perfil />
                 </ProtectedRoute>
               } 
             />
@@ -71,9 +62,7 @@ const App = () => (
               path="/configuracoes" 
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Configuracoes />
-                  </Layout>
+                  <Configuracoes />
                 </ProtectedRoute>
               } 
             />

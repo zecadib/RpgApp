@@ -5,8 +5,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Crown, LogOut, Copy, User, Shield } from 'lucide-react';
+import { Users, Crown, Copy, User, Shield, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui';
 import { showSuccess, showError } from '@/utils/toast';
+import LayoutPadrao from '@/components/LayoutPadrao';
 
 interface Participante {
   id: string;
@@ -24,6 +25,7 @@ const Sala = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isMestre, setIsMestre] = useState(false);
+  const [showEncerrarDialog, setShowEncerrarDialog] = useState(false);
 
   useEffect(() => {
     carregarDados();
@@ -127,6 +129,28 @@ const Sala = () => {
     }
   };
 
+  const handleEncerrarMesa = async () => {
+    if (!mesa || !currentUser || !isMestre) return;
+
+    try {
+      // Deletar a mesa (cascade deletará todos os participantes)
+      const { error } = await supabase
+        .from('mesas')
+        .delete()
+        .eq('id', mesa.id);
+
+      if (error) throw error;
+
+      showSuccess('Mesa encerrada com sucesso!');
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Erro ao encerrar mesa:', error);
+      showError('Erro ao encerrar mesa');
+    } finally {
+      setShowEncerrarDialog(false);
+    }
+  };
+
   const handleCopiarLink = () => {
     const link = `${window.location.origin}/entrar/${slug}`;
     navigator.clipboard.writeText(link);
@@ -144,11 +168,10 @@ const Sala = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-4">
-      <div className="container mx-auto max-w-6xl">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+  const content = (
+    <div className="container mx-auto max-w-6xl">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8gap-4">
           <div>
             <h1 className="text-3xl font-bold mb-2">{mesa?.nome}</h1>
             <div className="flex items-center gap-4">
@@ -173,14 +196,6 @@ const Sala = () => {
             >
               <Copy className="mr-2 h-4 w-4" />
               Copiar Link
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleSairDaMesa}
-              className="border-red-600 text-red-400 hover:bg-red-900/20"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sair da Mesa
             </Button>
           </div>
         </div>
@@ -332,7 +347,46 @@ const Sala = () => {
           </div>
         </div>
       </div>
-    </div>
+  );
+
+  return (
+    <LayoutPadrao 
+      isSala={true}
+      mesaSlug={slug}
+      isMestre={isMestre}
+      onSairMesa={handleSairDaMesa}
+      onEncerrarMesa={() => setShowEncerrarDialog(true)}
+    >
+      {content}
+      
+      {/* Dialog de Confirmação para Encerrar Mesa */}
+      <AlertDialog open={showEncerrarDialog} onOpenChange={setShowEncerrarDialog}>
+        <AlertDialogContent className="bg-gray-800 border-gray-700 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-400">Encerrar Mesa</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              Tem certeza que deseja encerrar esta mesa? Esta ação é irreversível e:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Todos os participantes serão removidos</li>
+                <li>A mesa será deletada permanentemente</li>
+                <li>Não será possível recuperar os dados</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-gray-600 hover:bg-gray-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleEncerrarMesa}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Encerrar Mesa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </LayoutPadrao>
   );
 };
 
