@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [mesas, setMesas] = useState<Mesa[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [tablesExist, setTablesExist] = useState(true);
 
   useEffect(() => {
     checkUser();
@@ -45,6 +46,25 @@ const Dashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Primeiro, verificar se as tabelas existem
+      try {
+        // Testar se a tabela mesas existe
+        const { error: testError } = await supabase
+          .from('mesas')
+          .select('count', { count: 'exact', head: true })
+          .limit(1);
+
+        if (testError && testError.code === 'PGRST205') {
+          setTablesExist(false);
+          showError('Tabelas do banco de dados não foram criadas. Execute o SQL no Supabase.');
+          return;
+        }
+      } catch (testError) {
+        setTablesExist(false);
+        showError('Erro ao verificar tabelas do banco de dados');
+        return;
+      }
+
       // Buscar mesas que o usuário participa
       const { data: participantes, error: participantesError } = await supabase
         .from('mesa_participantes')
@@ -60,7 +80,14 @@ const Dashboard = () => {
         `)
         .eq('user_id', user.id);
 
-      if (participantesError) throw participantesError;
+      if (participantesError) {
+        if (participantesError.code === 'PGRST205') {
+          setTablesExist(false);
+          showError('Tabela mesa_participantes não encontrada. Execute o SQL no Supabase.');
+          return;
+        }
+        throw participantesError;
+      }
 
       // Buscar contagem de participantes para cada mesa
       const mesasComParticipantes = await Promise.all(
@@ -113,6 +140,53 @@ const Dashboard = () => {
   const handleMesaCriada = () => {
     carregarMesas();
   };
+
+  if (!tablesExist) {
+    return (
+      <div className="p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+          <p className="text-gray-400">Gerencie suas mesas de RPG</p>
+        </div>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-xl text-red-400">Configuração Necessária</CardTitle>
+            <CardDescription className="text-gray-400">
+              As tabelas do banco de dados precisam ser criadas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-gray-300">
+                Para usar o sistema de mesas, você precisa executar o SQL no Supabase:
+              </p>
+              <ol className="list-decimal list-inside space-y-2 text-gray-300">
+                <li>Acesse o painel do Supabase</li>
+                <li>Vá para "SQL Editor"</li>
+                <li>Cole o SQL do arquivo <code>supabase/migrations/20241215_create_mesas_tables_fixed.sql</code></li>
+                <li>Execute o SQL</li>
+              </ol>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <p className="text-sm text-gray-400 mb-2">SQL para executar:</p>
+                <code className="text-xs text-gray-300">
+                  CREATE TABLE IF NOT EXISTS public.mesas (...);
+                </code>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              onClick={carregarMesas}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              Tentar Novamente
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
