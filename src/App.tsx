@@ -9,6 +9,8 @@ import Personagens from "./pages/Personagens";
 import Sistemas from "./pages/Sistemas";
 import Perfil from "./pages/Perfil";
 import Configuracoes from "./pages/Configuracoes";
+import EntrarNaMesa from "./pages/EntrarNaMesa";
+import Sala from "./pages/Sala";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./contexts/UserContext";
@@ -72,6 +74,22 @@ const App = () => (
                   <Layout>
                     <Configuracoes />
                   </Layout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/entrar/:slug" 
+              element={
+                <ProtectedRoute>
+                  <EntrarNaMesa />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/sala/:slug" 
+              element={
+                <ProtectedRoute>
+                  <Sala />
                 </ProtectedRoute>
               } 
             />
