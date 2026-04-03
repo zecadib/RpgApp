@@ -15,7 +15,9 @@ import {
   ChevronRight,
   Sword,
   Dice5,
-  DoorClosed
+  DoorClosed,
+  ArrowLeft,
+  Trash2
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/lib/supabase';
@@ -115,6 +117,10 @@ const LayoutPadrao = ({
     }
   };
 
+  const handleVoltar = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       {/* Sidebar */}
@@ -164,24 +170,35 @@ const LayoutPadrao = ({
         {/* Ações da Sala (se for sala) */}
         {isSala && (
           <div className="p-4 border-t border-gray-800 space-y-2">
+            {/* Botão Voltar para todos */}
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-800"
+              onClick={handleVoltar}
+            >
+              <ArrowLeft className="h-5 w-5" />
+              {!collapsed && <span className="ml-3">Voltar</span>}
+            </Button>
+            
+            {/* Botão específico para mestre ou jogador */}
             {isMestre && onEncerrarMesa && (
               <Button
                 variant="ghost"
                 className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
                 onClick={onEncerrarMesa}
               >
-                <DoorClosed className="h-5 w-5" />
+                <Trash2 className="h-5 w-5" />
                 {!collapsed && <span className="ml-3">Encerrar Mesa</span>}
               </Button>
             )}
             
-            {onSairMesa && (
+            {!isMestre && onSairMesa && (
               <Button
                 variant="ghost"
-                className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-800"
+                className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
                 onClick={onSairMesa}
               >
-                <LogOut className="h-5 w-5" />
+                <DoorClosed className="h-5 w-5" />
                 {!collapsed && <span className="ml-3">Sair da Mesa</span>}
               </Button>
             )}
