@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Crown, Copy, User, Shield, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui';
+import { Users, Crown, Copy, Shield } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import LayoutPadrao from '@/components/LayoutPadrao';
 
@@ -157,6 +157,12 @@ const Sala = () => {
     showSuccess('Link copiado para a área de transferência!');
   };
 
+  const handleEncerrarMesaConfirmado = () => {
+    if (window.confirm('Tem certeza que deseja encerrar esta mesa? Esta ação é irreversível e deletará a mesa e todos os participantes.')) {
+      handleEncerrarMesa();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
@@ -171,182 +177,182 @@ const Sala = () => {
   const content = (
     <div className="container mx-auto max-w-6xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">{mesa?.nome}</h1>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-400">
-                <Users className="h-5 w-5" />
-                <span>{participantes.length} jogadores</span>
-              </div>
-              {isMestre && (
-                <div className="flex items-center gap-2 text-yellow-400">
-                  <Crown className="h-5 w-5" />
-                  <span className="text-sm">Você é o mestre</span>
-                </div>
-              )}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">{mesa?.nome}</h1>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Users className="h-5 w-5" />
+              <span>{participantes.length} jogadores</span>
             </div>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={handleCopiarLink}
-              className="border-gray-600 hover:bg-gray-700"
-            >
-              <Copy className="mr-2 h-4 w-4" />
-              Copiar Link
-            </Button>
+            {isMestre && (
+              <div className="flex items-center gap-2 text-yellow-400">
+                <Crown className="h-5 w-5" />
+                <span className="text-sm">Você é o mestre</span>
+              </div>
+            )}
           </div>
         </div>
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleCopiarLink}
+            className="border-gray-600 hover:bg-gray-700"
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Copiar Link
+          </Button>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Lista de Participantes */}
-          <div className="lg:col-span-1">
-            <Card className="bg-gray-800/50 border-gray-700 h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Participantes
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  Jogadores online na mesa
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {participantes.map((participante) => {
-                    const isOnline = new Date(participante.ultima_atividade).getTime() > Date.now() - 60000; // 1 minuto
-                    const isCurrentUser = participante.user_id === currentUser?.id;
-                    
-                    return (
-                      <div 
-                        key={participante.id} 
-                        className={`flex items-center justify-between p-3 rounded-lg ${isCurrentUser ? 'bg-blue-900/20 border border-blue-800/30' : 'bg-gray-800/30'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{participante.nome_exibicao}</span>
-                              {participante.is_mestre && (
-                                <Crown className="h-4 w-4 text-yellow-400" />
-                              )}
-                              {isCurrentUser && (
-                                <span className="text-xs text-blue-400">(Você)</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-400">
-                              {isOnline ? 'Online' : 'Offline'}
-                            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Lista de Participantes */}
+        <div className="lg:col-span-1">
+          <Card className="bg-gray-800/50 border-gray-700 h-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Participantes
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Jogadores online na mesa
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {participantes.map((participante) => {
+                  const isOnline = new Date(participante.ultima_atividade).getTime() > Date.now() - 60000; // 1 minuto
+                  const isCurrentUser = participante.user_id === currentUser?.id;
+                  
+                  return (
+                    <div 
+                      key={participante.id} 
+                      className={`flex items-center justify-between p-3 rounded-lg ${isCurrentUser ? 'bg-blue-900/20 border border-blue-800/30' : 'bg-gray-800/30'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{participante.nome_exibicao}</span>
+                            {participante.is_mestre && (
+                              <Crown className="h-4 w-4 text-yellow-400" />
+                            )}
+                            {isCurrentUser && (
+                              <span className="text-xs text-blue-400">(Você)</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {isOnline ? 'Online' : 'Offline'}
                           </div>
                         </div>
-                        <div className="text-xs text-gray-400">
-                          {new Date(participante.ultima_atividade).toLocaleTimeString('pt-BR', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                      <div className="text-xs text-gray-400">
+                        {new Date(participante.ultima_atividade).toLocaleTimeString('pt-BR', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Área Principal da Sala */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Chat da Mesa */}
-            <Card className="bg-gray-800/50 border-gray-700">
+        {/* Área Principal da Sala */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Chat da Mesa */}
+          <Card className="bg-gray-800/50 border-gray-700">
+            <CardHeader>
+              <CardTitle>Chat da Mesa</CardTitle>
+              <CardDescription className="text-gray-400">
+                Converse com os outros jogadores
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 bg-gray-900/50 rounded-lg p-4 overflow-y-auto">
+                <div className="text-center text-gray-500 py-8">
+                  <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Chat da mesa em desenvolvimento</p>
+                  <p className="text-sm mt-2">Em breve: mensagens em tempo real!</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Ferramentas do Mestre */}
+          {isMestre && (
+            <Card className="bg-gray-800/50 border-gray-700 border-yellow-900/30">
               <CardHeader>
-                <CardTitle>Chat da Mesa</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-yellow-400">
+                  <Shield className="h-5 w-5" />
+                  Ferramentas do Mestre
+                </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Converse com os outros jogadores
+                  Controle exclusivo para o mestre da mesa
                 </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 bg-gray-900/50 rounded-lg p-4 overflow-y-auto">
-                  <div className="text-center text-gray-500 py-8">
-                    <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Chat da mesa em desenvolvimento</p>
-                    <p className="text-sm mt-2">Em breve: mensagens em tempo real!</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Ferramentas do Mestre */}
-            {isMestre && (
-              <Card className="bg-gray-800/50 border-gray-700 border-yellow-900/30">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-yellow-400">
-                    <Shield className="h-5 w-5" />
-                    Ferramentas do Mestre
-                  </CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Controle exclusivo para o mestre da mesa
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
-                      Gerenciar NPCs
-                    </Button>
-                    <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
-                      Rolagem de Dados
-                    </Button>
-                    <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
-                      Iniciar Combate
-                    </Button>
-                    <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
-                      Configurações da Mesa
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Informações da Mesa */}
-            <Card className="bg-gray-800/50 border-gray-700">
-              <CardHeader>
-                <CardTitle>Informações da Mesa</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Código da Mesa:</span>
-                      <code className="bg-gray-900 px-2 py-1 rounded">{mesa?.slug}</code>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Criada em:</span>
-                      <span>{new Date(mesa?.created_at).toLocaleDateString('pt-BR')}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Status:</span>
-                      <span className="text-green-400">● Ativa</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Link de Convite:</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={handleCopiarLink}
-                        className="text-blue-400 hover:text-blue-300"
-                      >
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
+                  <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
+                    Gerenciar NPCs
+                  </Button>
+                  <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
+                    Rolagem de Dados
+                  </Button>
+                  <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
+                    Iniciar Combate
+                  </Button>
+                  <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/20">
+                    Configurações da Mesa
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          )}
+
+          {/* Informações da Mesa */}
+          <Card className="bg-gray-800/50 border-gray-700">
+            <CardHeader>
+              <CardTitle>Informações da Mesa</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Código da Mesa:</span>
+                    <code className="bg-gray-900 px-2 py-1 rounded">{mesa?.slug}</code>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Criada em:</span>
+                    <span>{new Date(mesa?.created_at).toLocaleDateString('pt-BR')}</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Status:</span>
+                    <span className="text-green-400">● Ativa</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Link de Convite:</span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={handleCopiarLink}
+                      className="text-blue-400 hover:text-blue-300"
+                    >
+                      Copiar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
+    </div>
   );
 
   return (
@@ -355,37 +361,9 @@ const Sala = () => {
       mesaSlug={slug}
       isMestre={isMestre}
       onSairMesa={handleSairDaMesa}
-      onEncerrarMesa={() => setShowEncerrarDialog(true)}
+      onEncerrarMesa={handleEncerrarMesaConfirmado}
     >
       {content}
-      
-      {/* Dialog de Confirmação para Encerrar Mesa */}
-      <AlertDialog open={showEncerrarDialog} onOpenChange={setShowEncerrarDialog}>
-        <AlertDialogContent className="bg-gray-800 border-gray-700 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-red-400">Encerrar Mesa</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
-              Tem certeza que deseja encerrar esta mesa? Esta ação é irreversível e:
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Todos os participantes serão removidos</li>
-                <li>A mesa será deletada permanentemente</li>
-                <li>Não será possível recuperar os dados</li>
-              </ul>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="border-gray-600 hover:bg-gray-700">
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleEncerrarMesa}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Encerrar Mesa
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </LayoutPadrao>
   );
 };
