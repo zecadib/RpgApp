@@ -229,7 +229,7 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span<span className="text-sm text-gray-400">Status</span>
+                    <span className="text-sm text-gray-400">Status</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${mesa.is_mestre ? 'bg-yellow-900/30 text-yellow-400' : 'bg-blue-900/30 text-blue-400'}`}>
                       {mesa.is_mestre ? 'Mestre' : 'Jogador'}
                     </span>
