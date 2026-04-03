@@ -23,6 +23,7 @@ import {
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/lib/supabase';
 import { showSuccess, showError } from '@/utils/toast';
+import ThemeToggle from '@/components/ThemeToggle';
 
 interface LayoutPadraoProps {
   children: React.ReactNode;
@@ -123,11 +124,11 @@ const LayoutPadrao = ({
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
+    <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar */}
-      <div className={`h-screen bg-gray-900 border-r border-gray-800 flex flex-col transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
+      <div className={`h-screen bg-sidebar border-r border-border flex flex-col transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
         {/* Logo */}
-        <div className="p-4 border-b border-gray-800">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
             {!collapsed && (
               <div className="flex items-center gap-2">
@@ -144,7 +145,7 @@ const LayoutPadrao = ({
               variant="ghost"
               size="icon"
               onClick={() => setCollapsed(!collapsed)}
-              className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
             >
               {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
@@ -157,7 +158,7 @@ const LayoutPadrao = ({
             <Button
               key={item.id}
               variant="ghost"
-              className={`w-full justify-start ${isActive(item.path) ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+              className={`w-full justify-start ${isActive(item.path) ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}`}
               onClick={() => navigate(item.path)}
             >
               <div className="flex items-center gap-3">
@@ -170,11 +171,11 @@ const LayoutPadrao = ({
 
         {/* Ações da Sala (se for sala) */}
         {isSala && (
-          <div className="p-4 border-t border-gray-800 space-y-2">
+          <div className="p-4 border-t border-border space-y-2">
             {/* Botão Voltar para todos */}
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-800"
+              className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent"
               onClick={handleVoltar}
             >
               <ArrowLeft className="h-5 w-5" />
@@ -185,7 +186,7 @@ const LayoutPadrao = ({
             {isMestre && onEncerrarMesa && (
               <Button
                 variant="ghost"
-                className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                className="w-full justify-start text-destructive hover:text-destructive-foreground hover:bg-destructive/10"
                 onClick={onEncerrarMesa}
               >
                 <Trash2 className="h-5 w-5" />
@@ -196,7 +197,7 @@ const LayoutPadrao = ({
             {!isMestre && onSairMesa && (
               <Button
                 variant="ghost"
-                className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                className="w-full justify-start text-destructive hover:text-destructive-foreground hover:bg-destructive/10"
                 onClick={onSairMesa}
               >
                 <DoorClosed className="h-5 w-5" />
@@ -206,19 +207,28 @@ const LayoutPadrao = ({
           </div>
         )}
 
-        {/* User Info e Logout (se não for sala) */}
+        {/* User Info, Theme Toggle e Logout (se não for sala) */}
         {!isSala && (
-          <div className="p-4 border-t border-gray-800 space-y-4">
+          <div className="p-4 border-t border-border space-y-4">
             {!collapsed && username && (
               <div className="mb-2">
-                <p className="text-sm font-medium text-white truncate">{username}</p>
-                <p className="text-xs text-gray-400 truncate">Bem-vindo ao Nighshift</p>
+                <p className="text-sm font-medium text-foreground truncate">{username}</p>
+                <p className="text-xs text-muted-foreground truncate">Bem-vindo ao Nighshift</p>
               </div>
             )}
             
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              {!collapsed && (
+                <span className="text-xs text-muted-foreground flex-1 text-center">
+                  {typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark' ? 'Tema Escuro' : 'Tema Claro'}
+                </span>
+              )}
+            </div>
+            
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-800"
+              className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent"
               onClick={handleLogout}
             >
               <LogOut className="h-5 w-5" />
@@ -229,7 +239,7 @@ const LayoutPadrao = ({
       </div>
 
       {/* Conteúdo Principal */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-gray-100">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
