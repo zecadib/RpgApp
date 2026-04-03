@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gamepad2, Users, BookOpen, Star } from 'lucide-react';
+import { BookOpen, Users, Book, Star } from 'lucide-react';
 
 const Sistemas = () => {
   const sistemas = [
@@ -76,7 +76,7 @@ const Sistemas = () => {
                   </CardDescription>
                 </div>
                 <div className="p-2 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg">
-                  <Gamepad2 className="h-6 w-6" />
+                  <Book className="h-6 w-6" />
                 </div>
               </div>
             </CardHeader>

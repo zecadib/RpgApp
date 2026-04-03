@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { 
   Users, 
   User, 
-  Gamepad2, 
+  Book,
   Home,
   UserCircle,
   LogOut,
@@ -34,7 +34,7 @@ const Sidebar = () => {
     {
       id: 'sistemas',
       title: 'Sistemas',
-      icon: <Gamepad2 className="h-5 w-5" />,
+      icon: <Book className="h-5 w-5" />,
       path: '/sistemas'
     },
     {
